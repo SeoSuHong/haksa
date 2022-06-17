@@ -356,20 +356,59 @@ public class Main extends Application {
 	
 //-------------------- 학생 메인 화면 --------------------
 	public void sceneStudent(Stage stage) {
-		Label label = new Label("학생 페이지 입니다.");
-		Button btnLogOut = new Button("로그아웃");
+		BorderPane pane = new BorderPane();
+		Label title = new Label("학사관리시스템");
+		title.setStyle("-fx-font-size:20; -fx-font-weight:bold");
+		title.setPrefHeight(50);
+		BorderPane.setAlignment(title, Pos.CENTER);
+		pane.setTop(title);
 		
-		btnLogOut.setOnAction(e -> {
-			stage.close();
-			stage.setScene(logInScene);
-			stage.show();
-		});
+		VBox vBox = new VBox();
+		Button btnStuManage = new Button("수강과목");
+		Button btnProfManage = new Button("수강신청");
+		Button btnDepManage = new Button("자료실");
+		Button btnBoardManage = new Button("학교일정");
+		Button btnInfoManage = new Button("내 정보");
 		
-		GridPane grid = new GridPane();
-		grid.addRow(0, btnLogOut, label);
-		grid.setAlignment(Pos.TOP_RIGHT);
-		grid.setStyle("-fx-font-family: 'Malgun Gothic';");
-		stuScene = new Scene(grid, 400, 500);
+		btnStuManage.setPrefSize(100, 40);
+		btnStuManage.setStyle("-fx-font-size:14");
+		btnProfManage.setPrefSize(100, 40);
+		btnProfManage.setStyle("-fx-font-size:14");
+		btnDepManage.setPrefSize(100, 40);
+		btnDepManage.setStyle("-fx-font-size:14");
+		btnBoardManage.setPrefSize(100, 40);
+		btnBoardManage.setStyle("-fx-font-size:14");
+		btnInfoManage.setPrefSize(100, 40);
+		btnInfoManage.setStyle("-fx-font-size:14");
+		
+		VBox.setMargin(btnStuManage, new Insets(60, 0, 0, 0));
+		vBox.getChildren().addAll(btnStuManage, btnProfManage, btnDepManage, btnBoardManage, btnInfoManage);
+		pane.setLeft(vBox);
+		
+		Label lblTime = new Label();
+		Boolean stop = false;
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd E HH:mm", Locale.KOREA);
+				while(!stop) {
+					String strTime = sdf.format(new Date());
+					Platform.runLater(() -> {
+						lblTime.setText(strTime);
+					});
+					try {Thread.sleep(100);} catch (InterruptedException e) {}
+				}
+			}
+		};
+		thread.setDaemon(true);
+		thread.start();
+		
+		BorderPane.setAlignment(lblTime, Pos.BOTTOM_RIGHT);
+      BorderPane.setMargin(lblTime, new Insets(5, 5, 0, 0));
+      pane.setBottom(lblTime);
+		
+		pane.setStyle("-fx-font-family: 'Malgun Gothic';");
+		stuScene = new Scene(pane, 900, 500);
 		stage.setScene(stuScene);
 		stage.show();
 	}
