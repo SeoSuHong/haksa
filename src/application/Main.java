@@ -45,15 +45,16 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 	
-	Scene logInScene, profScene, stuScene, adminScene, signUpScene; // 각 페이지들
-	static String id;
-	Boolean stuIsCheck = false; // 학생 회원가입 ID 중복체크
-	Boolean profIsCheck = false; // 교수 회원가입 ID 중복체크
+	Scene logInScene, profScene, stuScene, adminScene, signUpScene; // Scene 이름
+	static String id; // 사용자의 id
+	Boolean stuIsCheck = false; // 학생 회원가입 ID 중복체크 여부
+	Boolean profIsCheck = false; // 교수 회원가입 ID 중복체크 여부
 	String prevId; // 회원가입 중복확인이 된 ID
 	
 	@Override
 	public void start(Stage stage) {
 		try {
+//-------------------------------------------------- 로그인 화면 --------------------------------------------------
 			// 로그인 화면 구현
 			Label lId = new Label("User ID : ");
 			TextField tfId = new TextField();
@@ -100,6 +101,7 @@ public class Main extends Application {
 							
 							// 관리자 ID, Password가 일치한다면
 							if(adminInfo[0].equals(id) && adminInfo[1].equals(password)) {
+								tfId.setText("");
 								tfPassword.setText("");
 								lMessage.setText("");
 								
@@ -113,10 +115,14 @@ public class Main extends Application {
 						lMessage.setText("ID를 입력해 주세요.");
 					} else if(password.equals("")) {
 						lMessage.setText("Password를 입력해 주세요.");
-					} else if(rbtnStu.isSelected()) { // 신원이 학생으로 선택되어 있다면
+						
+					// 신원이 학생으로 선택되어 있다면
+					} else if(rbtnStu.isSelected()) { 
 						StudentDAO student = new StudentDAO();
 						String[] stuInfo = student.studentLogInSelect(id);
-						if(stuInfo[0].equals(id) && stuInfo[1].equals(password)) { // 학생의 ID, Password가 일치한다면
+						
+						// 학생의 ID, Password가 일치한다면
+						if(stuInfo[0].equals(id) && stuInfo[1].equals(password)) { 
 							tfPassword.setText("");
 							lMessage.setText("");
 							rbtnStu.setSelected(false);
@@ -124,10 +130,14 @@ public class Main extends Application {
 							stage.close();
 							sceneStudent(stage); // 학생 계정 로그인
 						}
-					} else if(rbtnProf.isSelected()) { // 신원이 교수로 선택되어 있다면
+						
+					// 신원이 교수로 선택되어 있다면
+					} else if(rbtnProf.isSelected()) { 
 						ProfessorDAO professor = new ProfessorDAO();
 						String[] profInfo = professor.professorLogInSelect(id);
-						if(profInfo[0].equals(id) && profInfo[1].equals(password)) { // 교수의 ID, Password가 일치한다면
+						
+						// 교수의 ID, Password가 일치한다면
+						if(profInfo[0].equals(id) && profInfo[1].equals(password)) { 
 							tfPassword.setText("");
 							lMessage.setText("");
 							rbtnProf.setSelected(false);
@@ -137,7 +147,6 @@ public class Main extends Application {
 						}
 					}
 				} catch(Exception e) {
-					System.out.println("오류 : " + e.getMessage());
 					lMessage.setText("ID 혹은 Password가 일치하지 않습니다.");
 				}
 			});
@@ -170,8 +179,7 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
-	
-//-------------------- 회원가입 화면 --------------------
+//-------------------------------------------------- 회원가입 화면 --------------------------------------------------
 	public void sceneSignUp(Stage stage) {
 		// 회원가입 화면 구현
 		RadioButton rbtnStuSignUp = new RadioButton("학 생"); 
@@ -216,7 +224,8 @@ public class Main extends Application {
 		Alert alert = new Alert(AlertType.NONE,"" , ButtonType.OK);
 		alert.setTitle("회원가입");
 		
-		btnStuIdCheck.setOnAction(e -> { // 학생 회원가입 ID중복 체크버튼 클릭 시
+		// 학생 회원가입 ID중복 체크버튼 클릭 시
+		btnStuIdCheck.setOnAction(e -> { 
 			StudentDAO student = new StudentDAO();
 			int count = student.studentIdCheckSelect(tfId.getText()); // 입력한 ID와 DB에서 가져온 ID를 비교하여 중복되는 데이터 수 저장
 			Predicate<Integer> checked = (i) -> i == 0; // i가 0이면(중복되는 수가 0이면) true 반환
@@ -235,7 +244,8 @@ public class Main extends Application {
 			prevId = tfId.getText(); // 중복체크하는 순간 현재 입력한 ID값 저장
 		});
 		
-		btnProfIdCheck.setOnAction(e -> { // 교수 회원가입 ID중복 체크버튼 클릭 시
+		// 교수 회원가입 ID중복 체크버튼 클릭 시
+		btnProfIdCheck.setOnAction(e -> { 
 			ProfessorDAO professor = new ProfessorDAO();
 			int count = professor.professorIdCheckSelect(tfId.getText()); // 입력한 ID와 DB에서 가져온 ID를 비교하여 중복되는 데이터 수 저장
 			Predicate<Integer> checked = (i) -> i == 0; // i가 0이면 true 반환
@@ -354,7 +364,7 @@ public class Main extends Application {
 		stage.show();
 	}
 	
-//-------------------- 학생 메인 화면 --------------------
+//-------------------------------------------------- 학생 메인 화면 --------------------------------------------------
 	public void sceneStudent(Stage stage) {
 		BorderPane pane = new BorderPane();
 		Label title = new Label("학사관리시스템");
@@ -413,7 +423,7 @@ public class Main extends Application {
 		stage.show();
 	}
 
-//-------------------- 교수 메인 화면 --------------------
+//-------------------------------------------------- 교수 메인 화면 --------------------------------------------------
 	public void sceneProfessor(Stage stage) {
 		Label label = new Label("교수 페이지 입니다.");
 		Button btnLogOut = new Button("로그아웃");
@@ -437,7 +447,7 @@ public class Main extends Application {
 		stage.show();
 	}
 
-//-------------------- 관리자 메인 화면 --------------------
+//-------------------------------------------------- 관리자 메인 화면 --------------------------------------------------
 	public void sceneAdministrator(Stage stage) {
 		BorderPane pane = new BorderPane();
 		
@@ -445,7 +455,7 @@ public class Main extends Application {
 		title.setStyle("-fx-font-size:20; -fx-font-weight:bold");
 		title.setPrefHeight(50);
 		BorderPane.setAlignment(title, Pos.CENTER);
-		pane.setTop(title);
+		pane.setTop(title);  // BorderPane의 Top 부분
 		
 		VBox vBox = new VBox();
 		Button btnStuManage = new Button("학   생");
@@ -467,7 +477,7 @@ public class Main extends Application {
 		
 		VBox.setMargin(btnStuManage, new Insets(60, 0, 0, 0));
 		vBox.getChildren().addAll(btnStuManage, btnProfManage, btnDepManage, btnBoardManage, btnInfoManage);
-		pane.setLeft(vBox);
+		pane.setLeft(vBox);  // BorderPane 의 Left 부분
 		
 		// 학생 버튼 클릭 시 (학생 관리)
 		btnStuManage.setOnAction(e -> {
@@ -478,10 +488,10 @@ public class Main extends Application {
 			Label lName = new Label("이 름 : ");
 			
 			DepartmentDAO department = new DepartmentDAO();
-			List<String> departments = department.departmentSignUpSelect();
-			ObservableList<String> lstDepartment = FXCollections.observableArrayList(departments);
-	        ComboBox<String> cbDep = new ComboBox<String>(lstDepartment); // 저장한 list값을 학과선택comboBox에 출력
-	        cbDep.setEditable(true);
+			List<String> departments = department.departmentSignUpSelect();  // 모든 학과를 가져와 List에 넣는다.
+			ObservableList<String> lstDepartment = FXCollections.observableArrayList(departments);  // ObserVableList에 학과 list를 적용한다.
+	        ComboBox<String> cbDep = new ComboBox<String>(lstDepartment);  // 저장한 list값을 학과선택comboBox에 출력
+	        cbDep.setEditable(true);  // 학과 선택박스 타이핑 불가능(오직 선택)
 	        cbDep.setPrefSize(130, 20);
 	        
 	        TextField tfStuId = new TextField();
@@ -823,9 +833,13 @@ public class Main extends Application {
 				Optional<String> result = input.showAndWait();
 				
 				result.ifPresent(name -> {
-					admin.departmentInsert(name);
+					if (result.isEmpty()) {
+						Alert alert = new Alert(AlertType.NONE,"" , ButtonType.OK);
+						alert.setContentText("학과명을 입력하세요.");
+					} else {
+						admin.departmentInsert(name);
+					}
 				});
-				
 				tableView.setItems(admin.departmentInfoSelect());
 			});
 			
